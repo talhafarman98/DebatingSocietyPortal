@@ -4,14 +4,17 @@
   <meta charset="UTF-8" />
   <title>Send Message - Debating Society</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  
+  <!-- Quill Text Editor CSS -->
   <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
 
-  <!-- EmailJS v3 SDK -->
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <!-- EmailJS SDK -->
+  <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
   <script>
-    window.onload = function () {
-      emailjs.init("1ZN7RufokHRHyo3uy"); // Public key
-    };
+    (function(){
+      // TODO: Replace with your EmailJS PUBLIC KEY
+      emailjs.init(""); // e.g., emailjs.init("your_public_key");
+    })();
   </script>
 
   <style>
@@ -125,7 +128,7 @@
     <div class="member-list" id="memberList">
       <h3>Select Recipients:</h3>
       <div id="recipientsContainer"></div>
-      <button class="send-btn" onclick="sendEmails()">Send via Email</button>
+      <button class="send-btn" onclick="sendEmails()">Send Email</button>
     </div>
   </div>
 
@@ -133,7 +136,7 @@
   <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
   <script>
     let quill;
-    let selectedMembers = [];
+    let selectedEmails = [];
 
     function openEditor() {
       document.getElementById("editorSection").style.display = "block";
@@ -155,11 +158,11 @@
     }
 
     function prepareRecipients() {
-      const occasion = document.getElementById("occasion").value;
-      const summonedBy = document.getElementById("summonedBy").value;
-      const messageContent = quill.root.innerHTML;
+      const occasion = document.getElementById("occasion").value.trim();
+      const summonedBy = document.getElementById("summonedBy").value.trim();
+      const messageHtml = quill.root.innerHTML.trim();
 
-      if (!occasion || !summonedBy || messageContent.trim() === "<p><br></p>") {
+      if (!occasion || !summonedBy || messageHtml === "<p><br></p>") {
         alert("Please fill all fields and write a message.");
         return;
       }
@@ -167,15 +170,16 @@
       const members = JSON.parse(localStorage.getItem("members")) || [];
       const list = document.getElementById("recipientsContainer");
       list.innerHTML = "";
-      selectedMembers = [];
+      selectedEmails = [];
 
-      members.forEach((member, index) => {
+      members.forEach(member => {
+        if (!member.email) return;
         const div = document.createElement("div");
         div.className = "member-item";
         div.innerHTML = `
           <label>
-            <input type="checkbox" data-index="${index}" onchange="toggleRecipient(this)">
-            ${member.name} (${member.title}) - ${member.email}
+            <input type="checkbox" value="${member.email}" onchange="toggleRecipient(this)">
+            ${member.name} (${member.title})
           </label>
         `;
         list.appendChild(div);
@@ -185,45 +189,51 @@
     }
 
     function toggleRecipient(checkbox) {
-      const index = checkbox.getAttribute("data-index");
-      const members = JSON.parse(localStorage.getItem("members")) || [];
-      const member = members[index];
-
+      const email = checkbox.value;
       if (checkbox.checked) {
-        selectedMembers.push(member);
+        selectedEmails.push(email);
       } else {
-        selectedMembers = selectedMembers.filter(m => m.email !== member.email);
+        selectedEmails = selectedEmails.filter(e => e !== email);
       }
     }
 
     function sendEmails() {
-      const occasion = document.getElementById("occasion").value;
-      const summonedBy = document.getElementById("summonedBy").value;
-      const messageHTML = quill.root.innerHTML;
+      const occasion = document.getElementById("occasion").value.trim();
+      const from = document.getElementById("summonedBy").value.trim();
+      const message = quill.root.innerHTML.trim();
 
-      if (selectedMembers.length === 0) {
-        alert("Please select at least one member.");
+      if (!message || selectedEmails.length === 0) {
+        alert("Please select members and write a message.");
         return;
       }
 
-      selectedMembers.forEach(member => {
-        emailjs.send("default_service", "template_oen5k4e", {
-          name: member.name,
-          email: member.email,
-          title: occasion,
-          message: messageHTML
-        }).then(
-          function(response) {
-            console.log("✅ Email sent to:", member.email, response);
-          },
-          function(error) {
-            console.error("❌ Failed to send email to:", member.email, error);
-            alert("❌ Failed to send email. Check console for details.");
-          }
-        );
+      selectedEmails.forEach(email => {
+        sendEmail(email, from, occasion, message);
       });
 
-      alert("Emails have been sent. Check console for logs.");
+      alert("Message sending initiated. Check EmailJS dashboard for status.");
+    }
+
+    function sendEmail(userEmail, userName, userTitle, messageBody) {
+      emailjs.send(
+        "", // TODO: Replace with your EmailJS SERVICE ID
+        "", // TODO: Replace with your EmailJS TEMPLATE ID
+        {
+          name: userName,       // {{name}} in EmailJS template
+          email: userEmail,     // {{email}}
+          title: userTitle,     // {{title}}
+          message: messageBody  // {{message}} (optional if not in template)
+        }
+      ).then(
+        function(response) {
+          console.log("✅ Email sent successfully:", response);
+          // Optional: display or log success
+        },
+        function(error) {
+          console.error("❌ Failed to send email:", error);
+          alert("Failed to send email. Check console for details.");
+        }
+      );
     }
   </script>
 </body>
