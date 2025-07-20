@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Member Details</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f5f7fa;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 40px auto;
+      background-color: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #0a1a42;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: 600;
+      color: #0a1a42;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 12px 20px;
+      width: 100%;
+      background-color: #0a1a42;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #132f74;
+    }
+
+    .back-link {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .back-link a {
+      color: #0a1a42;
+      text-decoration: none;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Member Details</h2>
+
+    <form id="editForm">
+      <label>Name</label>
+      <input type="text" id="name" />
+
+      <label>Father's Name</label>
+      <input type="text" id="father" />
+
+      <label>Phone</label>
+      <input type="text" id="phone" />
+
+      <label>Class</label>
+      <input type="text" id="className" />
+
+      <label>Title</label>
+      <select id="title">
+        <option>President</option>
+        <option>Vice President</option>
+        <option>Treasurer</option>
+        <option>Advisor</option>
+        <option>Secretary</option>
+        <option>Member</option>
+      </select>
+
+      <label>Date of Joining</label>
+      <input type="date" id="doj" />
+
+      <button type="submit">Update Member</button>
+    </form>
+
+    <div class="back-link">
+      <a href="members.html">← Back to Members</a>
+    </div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const memberId = parseInt(params.get("id"));
+    let members = JSON.parse(localStorage.getItem("members")) || [];
+    let member = members.find(m => m.id === memberId);
+
+    if (!member) {
+      alert("Member not found.");
+      window.location.href = "members.html";
+    }
+
+    document.getElementById("name").value = member.name;
+    document.getElementById("father").value = member.father;
+    document.getElementById("phone").value = member.phone;
+    document.getElementById("className").value = member.className;
+    document.getElementById("title").value = member.title;
+    document.getElementById("doj").value = member.doj;
+
+    document.getElementById("editForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      member.name = document.getElementById("name").value;
+      member.father = document.getElementById("father").value;
+      member.phone = document.getElementById("phone").value;
+      member.className = document.getElementById("className").value;
+      member.title = document.getElementById("title").value;
+      member.doj = document.getElementById("doj").value;
+
+      const updated = members.map(m => m.id === memberId ? member : m);
+      localStorage.setItem("members", JSON.stringify(updated));
+      alert("Member updated successfully!");
+    });
+  </script>
+</body>
+</html>

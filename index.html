@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Debating Society Portal</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f5f7fa;
+      color: #333;
+    }
+
+    .login-container {
+      width: 100vw;
+      height: 100vh;
+      background: linear-gradient(145deg, #ffffff, #dbe8f5);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      animation: fadeIn 1s ease-in;
+    }
+
+    .login-container h2 {
+      font-size: 2rem;
+      color: #0a1a42;
+    }
+
+    .login-container input {
+      padding: 10px;
+      margin-top: 20px;
+      width: 250px;
+      border: 1px solid #0a1a42;
+      border-radius: 5px;
+      outline: none;
+    }
+
+    .login-container button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      background-color: #0a1a42;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .login-container button:hover {
+      background-color: #132f74;
+    }
+
+    .error-msg {
+      color: red;
+      margin-top: 10px;
+    }
+
+    .dashboard {
+      display: flex;
+      height: 100vh;
+    }
+
+    .sidebar {
+      width: 250px;
+      background-color: #0a1a42;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      animation: slideInLeft 0.7s ease-out;
+    }
+
+    .sidebar h3 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .sidebar ul li {
+      padding: 12px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      background-color: transparent;
+      transition: background 0.3s;
+      border-radius: 8px;
+    }
+
+    .sidebar ul li:hover,
+    .sidebar ul li.active {
+      background-color: #1f3775;
+    }
+
+    .main-content {
+      flex: 1;
+      padding: 30px;
+      background-color: #ffffff;
+      animation: fadeIn 1s ease-in;
+    }
+
+    @keyframes slideInLeft {
+      from {
+        transform: translateX(-250px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      } to {
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-container" id="loginContainer">
+    <h2>Debating Society Login</h2>
+    <input type="password" id="loginPin" placeholder="Enter PIN"/>
+    <button onclick="verifyLogin()">Login</button>
+    <p id="loginError" class="error-msg"></p>
+  </div>
+
+  <div class="dashboard" id="dashboard" style="display: none;">
+    <div class="sidebar">
+      <h3>Debate Society</h3>
+      <ul>
+        <li onclick="openPage('index.html')">Dashboard</li>
+        <li onclick="openPage('members.html')">Members</li>
+        <li onclick="openPage('addMember.html')">Add Member</li>
+        <li onclick="openPage('messages.html')">Messages</li>
+        <li onclick="openPage('events.html')">Events</li>
+      </ul>
+    </div>
+    <div class="main-content">
+      <h1>Welcome to the Debating Society Portal</h1>
+      <p>Choose an option from the left menu to continue.</p>
+    </div>
+  </div>
+
+  <script>
+    function verifyLogin() {
+      const pinInput = document.getElementById('loginPin').value;
+      const loginError = document.getElementById('loginError');
+
+      if (pinInput === '3311') {
+        document.getElementById('loginContainer').style.display = 'none';
+        document.getElementById('dashboard').style.display = 'flex';
+      } else {
+        loginError.textContent = "Incorrect PIN. Try again.";
+      }
+    }
+
+    function openPage(page) {
+      window.location.href = page;
+    }
+  </script>
+</body>
+</html>
