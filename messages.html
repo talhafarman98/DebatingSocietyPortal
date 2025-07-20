@@ -213,21 +213,23 @@
       alert("Message sending initiated. Check EmailJS dashboard for status.");
     }
 
-    function sendEmail(toEmail, fromName, subject, messageBody) {
-      emailjs.send("default_service", "template_oen5k4e", {
-        to_email: toEmail,
-        from_name: fromName,
-        subject: subject,
-        message: messageBody
-      }).then(
-        function(response) {
-          console.log("✅ Email sent to:", toEmail);
-        },
-        function(error) {
-          console.error("❌ Failed to send to:", toEmail, error);
-        }
-      );
+    function sendEmail(userEmail, userName, userTitle, messageBody) {
+  emailjs.send("default_service", "template_oen5k4e", {
+    name: userName,          // matches {{name}}
+    email: userEmail,        // matches {{email}}
+    title: userTitle,        // matches {{title}}
+    message: messageBody     // this variable is optional unless used in your template
+  }).then(
+    function(response) {
+      console.log("✅ Email sent successfully:", response);
+      alert("Email sent to: talhafarman98@gmail.com");
+    },
+    function(error) {
+      console.error("❌ Failed to send email:", error);
+      alert("Failed to send email. Check console for details.");
     }
+  );
+}
   </script>
 </body>
 </html>
